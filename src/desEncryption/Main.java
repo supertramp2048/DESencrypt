@@ -245,60 +245,60 @@ public class Main {
     }
 
     // thêm byte vào sao cho so byte phải chia hết cho 8 
-    static String apply_padding(String hex) {
-        // mỗi block = 8 bytes = 16 hex chars
-        int block_size = 16;
-        int remainder = hex.length() % block_size;
-        int pad_bytes = (remainder == 0) ? 8 : (block_size - remainder) / 2;
-        String pad_hex = String.format("%02X", pad_bytes);
-        for (int i = 0; i < pad_bytes; i++) {
-            hex += pad_hex;
-        }
-        return hex;
-    }
+//    static String apply_padding(String hex) {
+//        // mỗi block = 8 bytes = 16 hex chars
+//        int block_size = 16;
+//        int remainder = hex.length() % block_size;
+//        int pad_bytes = (remainder == 0) ? 8 : (block_size - remainder) / 2;
+//        String pad_hex = String.format("%02X", pad_bytes);
+//        for (int i = 0; i < pad_bytes; i++) {
+//            hex += pad_hex;
+//        }
+//        return hex;
+//    }
 
     //  xóa padding sau giải mã
-    static String remove_padding(String hex) {
-        int last_byte = Integer.parseInt(hex.substring(hex.length() - 2), 16);
-        int pad_length = last_byte * 2;
-        return hex.substring(0, hex.length() - pad_length);
-    }
+//    static String remove_padding(String hex) {
+//        int last_byte = Integer.parseInt(hex.substring(hex.length() - 2), 16);
+//        int pad_length = last_byte * 2;
+//        return hex.substring(0, hex.length() - pad_length);
+//    }
 
     // mã hóa 1 block 64-bit 
-    static String encrypt_block(String block_hex, ArrayList<String> subkeys) {
-        String plaintext_bin = hex_to_bin(block_hex);
-        plaintext_bin = apply_IP(plaintext_bin);
-        String left  = plaintext_bin.substring(0, 32);
-        String right = plaintext_bin.substring(32, 64);
-        String round_result = round_function(left, right, subkeys);
-        left  = round_result.substring(32, 64);
-        right = round_result.substring(0, 32);
-        String encrypted = left + right;
-        encrypted = apply_IIP(encrypted);
-        System.out.println(bin_to_hex(encrypted));
-        return bin_to_hex(encrypted);
-    }
+//    static String encrypt_block(String block_hex, ArrayList<String> subkeys) {
+//        String plaintext_bin = hex_to_bin(block_hex);
+//        plaintext_bin = apply_IP(plaintext_bin);
+//        String left  = plaintext_bin.substring(0, 32);
+//        String right = plaintext_bin.substring(32, 64);
+//        String round_result = round_function(left, right, subkeys);
+//        left  = round_result.substring(32, 64);
+//        right = round_result.substring(0, 32);
+//        String encrypted = left + right;
+//        encrypted = apply_IIP(encrypted);
+//        System.out.println(bin_to_hex(encrypted));
+//        return bin_to_hex(encrypted);
+//    }
     
-    static String read_data(String fileName) throws IOException {
-
-        byte[] data = Files.readAllBytes(Paths.get(fileName));
-
-        return new String(data);
-    }
+//    static String read_data(String fileName) throws IOException {
+//
+//        byte[] data = Files.readAllBytes(Paths.get(fileName));
+//
+//        return new String(data);
+//    }
     
     
-    static void write_data(String fileName, String data) throws IOException {
-        BufferedWriter fileOut;
-        try {
-            fileOut = new BufferedWriter(new FileWriter(fileName));
-        } catch (IOException e) {
-            System.err.println("Invalid file namee. Closing the program...");
-            System.exit(0);
-            return;
-        }
-        fileOut.write(data);
-        fileOut.close();
-    }
+//    static void write_data(String fileName, String data) throws IOException {
+//        BufferedWriter fileOut;
+//        try {
+//            fileOut = new BufferedWriter(new FileWriter(fileName));
+//        } catch (IOException e) {
+//            System.err.println("Invalid file namee. Closing the program...");
+//            System.exit(0);
+//            return;
+//        }
+//        fileOut.write(data);
+//        fileOut.close();
+//    }
 
     
     static String round_function(String left32, String right32, ArrayList<String> subkeys) {
