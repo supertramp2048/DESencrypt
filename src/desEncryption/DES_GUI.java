@@ -122,16 +122,16 @@ public class DES_GUI extends JFrame {
 
             if (isWeakKey(normalizedKey)) {
                 JOptionPane.showMessageDialog(this,
-                    "Khóa yếu (WEAK KEY) ❌\n" +
+                    "Khóa yếu (WEAK KEY) \n" +
                     "Khóa này không an toàn, vui lòng chọn khóa khác!");
                 return;
             }
 
             if (isSemiWeakKey(normalizedKey)) {
                 int choice = JOptionPane.showConfirmDialog(this,
-                    "Khóa bán yếu (SEMI-WEAK KEY) ⚠️\n" +
+                    "Khóa bán yếu (SEMI-WEAK KEY) \n" +
                     "Khóa này có thể gây rủi ro.\n" +
-                    "Anh có muốn tiếp tục không?",
+                    "Bạn có muốn tiếp tục không?",
                     "Cảnh báo bảo mật",
                     JOptionPane.YES_NO_OPTION);
 
