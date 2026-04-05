@@ -14,7 +14,39 @@ public class DES_GUI extends JFrame {
     private JTextField keyField;
     private JTextField fileField;
     private JComboBox<String> modeBox;
+    private static final String[] WEAK_KEYS = {
+            "0101010101010101",
+            "FEFEFEFEFEFEFEFE",
+            "E0E0E0E0F1F1F1F1",
+            "1F1F1F1F0E0E0E0E"
+        };
+    private static final String[] SEMI_WEAK_KEYS = {
+            "011F011F010E010E", "1F011F010E010E01",
+            "01E001E001F101F1", "E001E001F101F101",
+            "01FE01FE01FE01FE", "FE01FE01FE01FE01",
+            "1FE01FE00EF10EF1", "E01FE01FF10EF10E",
+            "1FFE1FFE0EFE0EFE", "FE1FFE1FFE0EFE0E",
+            "E0FEE0FEF1FEF1FE", "FEE0FEE0FEF1FEF1"
+        };
+    private String normalizeKey(String key) {
+        return key.replaceAll("\\s+", "").toUpperCase();
+    }
 
+    private boolean isWeakKey(String key) {
+        key = normalizeKey(key);
+        for (String wk : WEAK_KEYS) {
+            if (wk.equals(key)) return true;
+        }
+        return false;
+    }
+
+    private boolean isSemiWeakKey(String key) {
+        key = normalizeKey(key);
+        for (String swk : SEMI_WEAK_KEYS) {
+            if (swk.equals(key)) return true;
+        }
+        return false;
+    }
     public DES_GUI() {
 
         setTitle("DES Encryption Tool");
@@ -72,6 +104,41 @@ public class DES_GUI extends JFrame {
     private void runDES() {
         try {
             String key_hex = keyField.getText().trim();
+            
+            if (key_hex.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập khóa HEX!");
+                return;
+            }
+            if (key_hex.length() > 16) {
+                JOptionPane.showMessageDialog(this, "Khóa quá dài! DES chỉ hỗ trợ tối đa 16 ký tự HEX (64-bit).\nVui lòng nhập lại.");
+                return;
+            }
+            if (!key_hex.matches("^[0-9A-Fa-f]+$")) {
+                JOptionPane.showMessageDialog(this, "Khóa chứa ký tự không hợp lệ! Chỉ chấp nhận từ 0-9 và A-F.");
+                return;
+            }
+         // Check weak key
+            String normalizedKey = normalizeKey(key_hex);
+
+            if (isWeakKey(normalizedKey)) {
+                JOptionPane.showMessageDialog(this,
+                    "Khóa yếu (WEAK KEY) ❌\n" +
+                    "Khóa này không an toàn, vui lòng chọn khóa khác!");
+                return;
+            }
+
+            if (isSemiWeakKey(normalizedKey)) {
+                int choice = JOptionPane.showConfirmDialog(this,
+                    "Khóa bán yếu (SEMI-WEAK KEY) ⚠️\n" +
+                    "Khóa này có thể gây rủi ro.\n" +
+                    "Anh có muốn tiếp tục không?",
+                    "Cảnh báo bảo mật",
+                    JOptionPane.YES_NO_OPTION);
+
+                if (choice != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
             File inputFile = new File(fileField.getText().trim());
             String mode = (String) modeBox.getSelectedItem();
             boolean isEncrypt = mode.equals("Mã hóa");
@@ -84,7 +151,7 @@ public class DES_GUI extends JFrame {
             // Doc File duoi dang mang byte
             byte[] data = Files.readAllBytes(inputFile.toPath());
             long startTime = System.nanoTime();
-            // 3. Xử lý Padding (PKCS5 Standard)
+            //  Them padding
             if (isEncrypt) {
                 int paddingLen = 8 - (data.length % 8);
                 byte[] paddedData = new byte[data.length + paddingLen];
@@ -95,7 +162,7 @@ public class DES_GUI extends JFrame {
                 data = paddedData;
             }
 
-            // 4. Mã hóa/Giải mã từng block 8-byte
+            // Ma hoa hoac giai ma
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             for (int i = 0; i < data.length; i += 8) {
                 byte[] block = new byte[8];
@@ -106,7 +173,7 @@ public class DES_GUI extends JFrame {
             
             byte[] resultData = outputStream.toByteArray();
 
-            // Loại bỏ Padding sau khi giải mã
+            // Bo padding sau giai ma
             if (!isEncrypt) {
                 int paddingLen = resultData[resultData.length - 1] & 0xFF;
                 if (paddingLen > 0 && paddingLen <= 8) {
@@ -124,8 +191,7 @@ public class DES_GUI extends JFrame {
             String action = isEncrypt ? "Mã hóa" : "Giải mã";
             JOptionPane.showMessageDialog(this, 
                     action + " thành công!\n" +
-                    "Thời gian thực hiện: " + String.format("%.3f", durationMs) + " ms\n" +
-                    "Dung lượng file: " + data.length + " bytes");
+                    "Thời gian thực hiện: " + String.format("%.3f", durationMs) + " ms");
 
         } catch (Exception ex) {
             ex.printStackTrace();

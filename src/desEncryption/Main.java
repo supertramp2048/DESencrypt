@@ -224,83 +224,7 @@ public class Main {
         }
         return subkeys;
     }
-    //cac Ham de chuyen ky tu tu text sang hex 
- // chuyen text sang hex
-    static String text_to_hex(String text) {
-        String hex = "";
-        for (int i = 0; i < text.length(); i++) {
-            hex += String.format("%02X", (int) text.charAt(i));
-        }
-        return hex;
-    }
-
-    // chuyen hex sang text
-    static String hex_to_text(String hex) {
-        String text = "";
-        for (int i = 0; i < hex.length(); i += 2) {
-            int charCode = Integer.parseInt(hex.substring(i, i + 2), 16);
-            text += (char) charCode;
-        }
-        return text;
-    }
-
-    // thêm byte vào sao cho so byte phải chia hết cho 8 
-//    static String apply_padding(String hex) {
-//        // mỗi block = 8 bytes = 16 hex chars
-//        int block_size = 16;
-//        int remainder = hex.length() % block_size;
-//        int pad_bytes = (remainder == 0) ? 8 : (block_size - remainder) / 2;
-//        String pad_hex = String.format("%02X", pad_bytes);
-//        for (int i = 0; i < pad_bytes; i++) {
-//            hex += pad_hex;
-//        }
-//        return hex;
-//    }
-
-    //  xóa padding sau giải mã
-//    static String remove_padding(String hex) {
-//        int last_byte = Integer.parseInt(hex.substring(hex.length() - 2), 16);
-//        int pad_length = last_byte * 2;
-//        return hex.substring(0, hex.length() - pad_length);
-//    }
-
-    // mã hóa 1 block 64-bit 
-//    static String encrypt_block(String block_hex, ArrayList<String> subkeys) {
-//        String plaintext_bin = hex_to_bin(block_hex);
-//        plaintext_bin = apply_IP(plaintext_bin);
-//        String left  = plaintext_bin.substring(0, 32);
-//        String right = plaintext_bin.substring(32, 64);
-//        String round_result = round_function(left, right, subkeys);
-//        left  = round_result.substring(32, 64);
-//        right = round_result.substring(0, 32);
-//        String encrypted = left + right;
-//        encrypted = apply_IIP(encrypted);
-//        System.out.println(bin_to_hex(encrypted));
-//        return bin_to_hex(encrypted);
-//    }
-    
-//    static String read_data(String fileName) throws IOException {
-//
-//        byte[] data = Files.readAllBytes(Paths.get(fileName));
-//
-//        return new String(data);
-//    }
-    
-    
-//    static void write_data(String fileName, String data) throws IOException {
-//        BufferedWriter fileOut;
-//        try {
-//            fileOut = new BufferedWriter(new FileWriter(fileName));
-//        } catch (IOException e) {
-//            System.err.println("Invalid file namee. Closing the program...");
-//            System.exit(0);
-//            return;
-//        }
-//        fileOut.write(data);
-//        fileOut.close();
-//    }
-
-    
+   
     static String round_function(String left32, String right32, ArrayList<String> subkeys) {
         String EP_val, EP_XOR_K, s_box_val, permute, left = "", previousLeft, right = "", encrypted = "";
         for (int i = 0; i < subkeys.size(); i++) {
@@ -449,7 +373,7 @@ public class Main {
         return new_string;
     }
 
- // Chuyển 1 mảng 8 bytes thành chuỗi 64 bit
+ // chuyen mang 8 byte thanh chuoi 64 bit
     static String bytes_to_bin(byte[] bytes) {
         StringBuilder bin = new StringBuilder();
         for (byte b : bytes) {
@@ -460,7 +384,7 @@ public class Main {
         return bin.toString();
     }
 
-    // Chuyển chuỗi 64 bit thành mảng 8 bytes
+    // chuyen chuoi 64bit to bytes
     static byte[] bin_to_bytes(String bin) {
         byte[] bytes = new byte[8];
         for (int i = 0; i < 8; i++) {
@@ -470,7 +394,7 @@ public class Main {
         return bytes;
     }
 
-    // Hàm mã hóa 1 block 8 bytes (Chuẩn)
+    // ma hoa 1 block 8 byte
     static byte[] encrypt_block_byte(byte[] block_8bytes, ArrayList<String> subkeys) {
         String bin = bytes_to_bin(block_8bytes);
         bin = apply_IP(bin);
@@ -483,5 +407,7 @@ public class Main {
         encrypted_bin = apply_IIP(encrypted_bin);
         return bin_to_bytes(encrypted_bin);
     }
+    
+   
 }
 
